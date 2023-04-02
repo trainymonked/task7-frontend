@@ -10,8 +10,9 @@ export default function RPS() {
 
     const [choice, setChoice] = useState('')
     const [gamecode, setGamecode] = useState('')
-    const [requested, setRequested] = useState(false)
+    const [requested, setRequested] = useState('')
     const [connected, setConnected] = useState(false)
+    const [loading, setLoading] = useState(false)
     const [error, setError] = useState('')
     const [winner, setWinner] = useState('')
     const [yourTurn, setYourTurn] = useState(false)
@@ -21,6 +22,7 @@ export default function RPS() {
     useEffect(() => {
         if (choice === 'start') {
             socket.current = new WebSocket(serverUri)
+            setLoading(true)
             socket.current.onopen = () => {
                 const message = {
                     event: 'create',
@@ -30,6 +32,7 @@ export default function RPS() {
                 socket.current.send(JSON.stringify(message))
             }
             socket.current.onmessage = (event) => {
+                setLoading(false)
                 const data = JSON.parse(event.data)
                 if (data.error) {
                     setError(data.error)
@@ -66,6 +69,7 @@ export default function RPS() {
     const join = (event) => {
         event.preventDefault()
         socket.current = new WebSocket(serverUri)
+        setLoading(true)
         socket.current.onopen = () => {
             const message = {
                 event: 'join',
@@ -75,6 +79,7 @@ export default function RPS() {
             socket.current.send(JSON.stringify(message))
         }
         socket.current.onmessage = (event) => {
+            setLoading(false)
             const data = JSON.parse(event.data)
             if (data.error) {
                 setError(data.error)
@@ -159,13 +164,13 @@ export default function RPS() {
                         <Box sx={{ display: 'flex', flexDirection: 'row', gap: 1, justifyContent: 'center', mt: 2 }}>
                             <TextField
                                 size='small'
-                                id='gamecode'
+                                autoComplete='off'
                                 autoFocus
                                 value={gamecode}
                                 onChange={(e) => setGamecode(e.target.value)}
                             />
                             <Button
-                                disabled={gamecode.length === 0 || requested !== false}
+                                disabled={gamecode.length === 0 || Boolean(requested)}
                                 type='submit'
                                 variant='contained'
                                 color='success'
@@ -192,5 +197,7 @@ export default function RPS() {
         }
     }
 
-    return <Container sx={{ mt: 2 }}>{content}</Container>
+    return (
+        <Container sx={{ mt: 2 }}>{loading ? <Typography align='center'>Loading...</Typography> : content}</Container>
+    )
 }

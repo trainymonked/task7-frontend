@@ -18,8 +18,8 @@ export default function App() {
                 <Route path='/' element={<Navigate to='/lobby' />} />
                 <Route path='/login' element={!user ? <Login /> : <Navigate to='/lobby' />} />
                 <Route path='/lobby' element={user ? <Lobby /> : <Navigate to='/login' />} />
-                <Route path='/ttt' element={<TTT />} />
-                <Route path='/rps' element={<RPS />} />
+                <Route path='/ttt' element={user ? <TTT /> : <Navigate to='/login' />} />
+                <Route path='/rps' element={user ? <RPS /> : <Navigate to='/login' />} />
                 <Route path='*' element={<Navigate to='/' />} />
             </Routes>
         </BrowserRouter>
