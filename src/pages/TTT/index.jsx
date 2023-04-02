@@ -129,7 +129,7 @@ export default function TTT() {
                 </Grid>
                 <Box>
                     {error && <Typography>Error: {error}</Typography>}
-                    {winner && <Typography>Game Over: {winner} wins</Typography>}
+                    {winner && (<Typography>{winner === 'tie' ? 'Tie!' : `Game Over: ${winner} wins` }</Typography>)}
                     {!winner && <Typography>{yourTurn ? 'Your turn' : `${requested}'s turn`}</Typography>}
                 </Box>
             </Box>
