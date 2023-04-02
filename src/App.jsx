@@ -1,5 +1,5 @@
 import { useContext } from 'react'
-import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
+import { HashRouter, Navigate, Route, Routes } from 'react-router-dom'
 import { Container } from '@mui/material'
 
 import Header from './components/Header'
@@ -13,7 +13,7 @@ export default function App() {
     const { user } = useContext(UserContext)
 
     return (
-        <BrowserRouter>
+        <HashRouter>
             <Header />
             <Container sx={{ mt: 3 }}>
                 <Routes>
@@ -25,6 +25,6 @@ export default function App() {
                     <Route path='*' element={<Navigate to='/' />} />
                 </Routes>
             </Container>
-        </BrowserRouter>
+        </HashRouter>
     )
 }
