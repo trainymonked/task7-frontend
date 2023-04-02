@@ -7,6 +7,7 @@ import UserContext from './api/UserContext'
 import Login from './pages/Login'
 import Lobby from './pages/Lobby'
 import TTT from './pages/TTT'
+import RPS from './pages/RPS'
 
 export default function App() {
     const { user } = useContext(UserContext)
@@ -20,7 +21,7 @@ export default function App() {
                     <Route path='/login' element={!user ? <Login /> : <Navigate to='/lobby' />} />
                     <Route path='/lobby' element={user ? <Lobby /> : <Navigate to='/login' />} />
                     <Route path='/ttt' element={<TTT />} />
-                    {/* <Route path='/play/ttt' element={<TTT />} /> */}
+                    <Route path='/rps' element={<RPS />} />
                     <Route path='*' element={<Navigate to='/' />} />
                 </Routes>
             </Container>

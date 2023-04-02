@@ -1,24 +1,20 @@
 import { useContext, useEffect, useRef, useState } from 'react'
-import { Box, Button, Grid, TextField, Typography } from '@mui/material'
-import CloseIcon from '@mui/icons-material/Close'
-import RadioButtonUncheckedIcon from '@mui/icons-material/RadioButtonUnchecked'
+import { Box, Button, TextField, Typography } from '@mui/material'
 
 import UserContext from '../../api/UserContext'
 import { serverUri } from '../../api/Constants'
 
-export default function TTT() {
+export default function RPS() {
     const socket = useRef()
-    const grid = useRef()
     const { user } = useContext(UserContext)
 
     const [choice, setChoice] = useState('')
     const [gamecode, setGamecode] = useState('')
-    const [requested, setRequested] = useState('')
+    const [requested, setRequested] = useState(false)
     const [connected, setConnected] = useState(false)
     const [error, setError] = useState('')
     const [winner, setWinner] = useState('')
     const [yourTurn, setYourTurn] = useState(false)
-    const [gameState, setGameState] = useState(Array.from(Array(9)))
 
     useEffect(() => {
         if (choice === 'start') {
@@ -27,7 +23,7 @@ export default function TTT() {
                 const message = {
                     event: 'create',
                     username: user,
-                    game: 'ttt',
+                    game: 'rps',
                 }
                 socket.current.send(JSON.stringify(message))
             }
@@ -45,9 +41,8 @@ export default function TTT() {
                     setRequested(data.guestName)
                 }
                 if (data.statusCode === 'started') {
-                    setGameState(data.state)
                     setConnected(true)
-                    setYourTurn(data.turn === 'x')
+                    setYourTurn(!data.hostMove)
                 }
                 if (data.statusCode === 'over') {
                     setWinner(data.winner)
@@ -88,9 +83,8 @@ export default function TTT() {
                 setRequested(data.hostName)
             }
             if (data.statusCode === 'started') {
-                setGameState(data.state)
                 setConnected(true)
-                setYourTurn(data.turn === 'o')
+                setYourTurn(data.hostMove)
             }
             if (data.statusCode === 'over') {
                 setWinner(data.winner)
@@ -98,11 +92,11 @@ export default function TTT() {
         }
     }
 
-    const move = (cell) => {
+    const move = (move) => {
         const message = {
-            event: 'ttt-turn',
+            event: 'rps-turn',
             id: gamecode,
-            cellId: cell.target.id,
+            move: move,
             username: user,
         }
         socket.current.send(JSON.stringify(message))
@@ -111,24 +105,32 @@ export default function TTT() {
     if (connected) {
         return (
             <Box sx={{ display: 'flex', flexDirection: 'row' }}>
-                <Grid container ref={grid} maxWidth={500} gap={2}>
-                    {gameState.map((v, i) => (
-                        <Grid
-                            item
-                            key={i}
-                            id={i}
-                            onClick={(e) => !winner && move(e)}
-                            sx={{ width: 150, height: 150, border: '1px solid #000', cursor: 'pointer' }}
-                        >
-                            {v === 'x' && <CloseIcon sx={{ height: 100, width: 100, padding: 3 }} />}
-                            {v === 'o' && <RadioButtonUncheckedIcon sx={{ height: 100, width: 100, padding: 3 }} />}
-                        </Grid>
-                    ))}
-                </Grid>
+                <Box sx={{ display: 'flex', flexDirection: 'row', gap: 1 }}>
+                    {winner === '' &&
+                        (yourTurn ? (
+                            <>
+                                <Button onClick={() => move('rock')} variant='contained'>
+                                    Rock
+                                </Button>
+                                <Button onClick={() => move('paper')} variant='contained'>
+                                    Paper
+                                </Button>
+                                <Button onClick={() => move('scissors')} variant='contained'>
+                                    Scissors
+                                </Button>
+                            </>
+                        ) : (
+                            <Typography>Enemy's turn</Typography>
+                        ))}
+                </Box>
                 <Box>
                     {error && <Typography>Error: {error}</Typography>}
-                    {winner && <Typography>Game Over: {winner} wins</Typography>}
-                    {!winner && <Typography>{yourTurn ? 'Your turn' : `${requested}'s turn`}</Typography>}
+                    {winner !== '' &&
+                        (winner !== 0 ? (
+                            <Typography>Game Over: {winner} wins</Typography>
+                        ) : (
+                            <Typography>Tie!</Typography>
+                        ))}
                 </Box>
             </Box>
         )
@@ -164,7 +166,7 @@ export default function TTT() {
                             onChange={(e) => setGamecode(e.target.value)}
                         />
                         <Button
-                            disabled={gamecode.length === 0 || requested}
+                            disabled={gamecode.length === 0 || requested !== false}
                             type='submit'
                             variant='contained'
                             color='success'

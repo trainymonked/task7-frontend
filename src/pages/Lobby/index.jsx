@@ -11,7 +11,9 @@ export function OutlinedCard({ game }) {
                     <Typography variant='body2'>{game.description}</Typography>
                 </CardContent>
                 <CardActions>
-                    <Button size='small' href={`/${game.id}`}>Play</Button>
+                    <Button size='small' href={`/${game.id}`}>
+                        Play
+                    </Button>
                 </CardActions>
             </Card>
         </Box>
@@ -23,6 +25,11 @@ const games = [
         id: 'ttt',
         name: 'Tic-Tac-Toe',
         description: `A game in which two players seek in alternate turns to complete a row, a column, or a diagonal with either three O's or three X's drawn in the spaces of a grid of nine squares; noughts and crosses.`,
+    },
+    {
+        id: 'rps',
+        name: 'Rock Paper Scissors',
+        description: `Rock paper scissors is a hand game, played between two people, in which each player simultaneously forms one of three shapes with an outstretched hand. These shapes are "rock", "paper", and "scissors".`,
     },
 ]
 
