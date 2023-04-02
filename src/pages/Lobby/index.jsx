@@ -1,4 +1,4 @@
-import { Box, Button, Card, CardActions, CardContent, Grid, Typography } from '@mui/material'
+import { Box, Button, Card, CardActions, CardContent, Container, Grid, Typography } from '@mui/material'
 
 export function OutlinedCard({ game }) {
     return (
@@ -35,16 +35,18 @@ const games = [
 
 export default function Lobby() {
     return (
-        <Box>
-            <Typography>Choose the game</Typography>
+        <Container sx={{ mt: 2 }}>
+            <Box>
+                <Typography>Choose the game</Typography>
 
-            <Grid container spacing={2} mt={2}>
-                {games.map((game) => (
-                    <Grid item md={4} key={game.id}>
-                        <OutlinedCard game={game} />
-                    </Grid>
-                ))}
-            </Grid>
-        </Box>
+                <Grid container spacing={2} mt={2}>
+                    {games.map((game) => (
+                        <Grid item md={4} key={game.id}>
+                            <OutlinedCard game={game} />
+                        </Grid>
+                    ))}
+                </Grid>
+            </Box>
+        </Container>
     )
 }

@@ -1,5 +1,5 @@
 import { useContext, useEffect, useRef, useState } from 'react'
-import { Box, Button, Grid, TextField, Typography } from '@mui/material'
+import { Box, Button, Container, Grid, TextField, Typography } from '@mui/material'
 import CloseIcon from '@mui/icons-material/Close'
 import RadioButtonUncheckedIcon from '@mui/icons-material/RadioButtonUnchecked'
 
@@ -19,6 +19,8 @@ export default function TTT() {
     const [winner, setWinner] = useState('')
     const [yourTurn, setYourTurn] = useState(false)
     const [gameState, setGameState] = useState(Array.from(Array(9)))
+
+    let content
 
     useEffect(() => {
         if (choice === 'start') {
@@ -109,7 +111,7 @@ export default function TTT() {
     }
 
     if (connected) {
-        return (
+        content = (
             <Box sx={{ display: 'flex', flexDirection: 'row' }}>
                 <Grid container ref={grid} maxWidth={500} gap={2}>
                     {gameState.map((v, i) => (
@@ -132,61 +134,61 @@ export default function TTT() {
                 </Box>
             </Box>
         )
-    }
-
-    if (choice === 'start') {
-        return (
-            <Box>
-                <Typography>Give this code to your friend so they can join the game:</Typography>
-                <Typography>{gamecode}</Typography>
-                <br />
-                {requested && <Typography>{requested} wants to join. Accept?</Typography>}
-                {requested && (
-                    <Button onClick={startTheGame} variant='contained' color='success'>
-                        OK, Start the game
-                    </Button>
-                )}
-            </Box>
-        )
-    }
-
-    if (choice === 'join') {
-        return (
-            <Box sx={{ textAlign: 'center', mt: 20 }}>
-                <Typography>Enter game code:</Typography>
-                <form onSubmit={join}>
-                    <Box sx={{ display: 'flex', flexDirection: 'row', gap: 1, justifyContent: 'center', mt: 2 }}>
-                        <TextField
-                            size='small'
-                            id='gamecode'
-                            autoFocus
-                            value={gamecode}
-                            onChange={(e) => setGamecode(e.target.value)}
-                        />
-                        <Button
-                            disabled={gamecode.length === 0 || requested}
-                            type='submit'
-                            variant='contained'
-                            color='success'
-                        >
-                            Join
+    } else {
+        if (choice === 'start') {
+            content = (
+                <Box>
+                    <Typography>Give this code to your friend so they can join the game:</Typography>
+                    <Typography>{gamecode}</Typography>
+                    <br />
+                    {requested && <Typography>{requested} wants to join. Accept?</Typography>}
+                    {requested && (
+                        <Button onClick={startTheGame} variant='contained' color='success'>
+                            OK, Start the game
                         </Button>
-                    </Box>
-                </form>
-                {error && <Typography>Error: {error}</Typography>}
-                {requested && <Typography>Waiting for the host to start the game.</Typography>}
-            </Box>
-        )
+                    )}
+                </Box>
+            )
+        } else if (choice === 'join') {
+            content = (
+                <Box sx={{ textAlign: 'center', mt: 20 }}>
+                    <Typography>Enter game code:</Typography>
+                    <form onSubmit={join}>
+                        <Box sx={{ display: 'flex', flexDirection: 'row', gap: 1, justifyContent: 'center', mt: 2 }}>
+                            <TextField
+                                size='small'
+                                id='gamecode'
+                                autoFocus
+                                value={gamecode}
+                                onChange={(e) => setGamecode(e.target.value)}
+                            />
+                            <Button
+                                disabled={gamecode.length === 0 || requested}
+                                type='submit'
+                                variant='contained'
+                                color='success'
+                            >
+                                Join
+                            </Button>
+                        </Box>
+                    </form>
+                    {error && <Typography>Error: {error}</Typography>}
+                    {requested && <Typography>Waiting for the host to start the game.</Typography>}
+                </Box>
+            )
+        } else {
+            content = (
+                <Box sx={{ mt: 30, display: 'flex', flexDirection: 'row', gap: 4, justifyContent: 'center' }}>
+                    <Button variant='contained' size='large' onClick={() => setChoice('start')}>
+                        Start a New Game
+                    </Button>
+                    <Button variant='contained' size='large' onClick={() => setChoice('join')}>
+                        Join Existing Game
+                    </Button>
+                </Box>
+            )
+        }
     }
 
-    return (
-        <Box sx={{ mt: 30, display: 'flex', flexDirection: 'row', gap: 4, justifyContent: 'center' }}>
-            <Button variant='contained' size='large' onClick={() => setChoice('start')}>
-                Start a New Game
-            </Button>
-            <Button variant='contained' size='large' onClick={() => setChoice('join')}>
-                Join Existing Game
-            </Button>
-        </Box>
-    )
+    return <Container sx={{ mt: 2 }}>{content}</Container>
 }
